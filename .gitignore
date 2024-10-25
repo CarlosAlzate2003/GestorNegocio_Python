@@ -1,0 +1,74 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+env/
+modules/
+venv/
+*.env
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# FastAPI
+*.db
+*.sqlite3
+
+# Uvicorn
+*.log
+
+# SQLAlchemy
+*.db
+*.sqlite3
+
+# Pydantic
+*.pyc
+*.pyo
+
+# General
+.DS_Store
+*.swp
+
+# Coverage reports
+.coverage
+coverage.xml
+*.cover
+*.nib
+*.py,cover
+
+# Migrations
+migrations/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# macOS
+*.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Pytest
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+*.pyo
+*.pyd
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+.pyre/
+
+# Logs
+*.log
+
+# Local environment variables
+.env
