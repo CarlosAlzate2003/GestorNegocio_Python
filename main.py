@@ -5,6 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 from app.routes.Bodega.BodegaControladores import router as bodega_router
 from app.routes.Login.LoginControlador import router as login_router
+from app.models.Tables import Base
+from app.database.Config import engine
+
+Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI()
@@ -43,4 +47,4 @@ app.include_router(bodega_router, prefix="/bodega", tags=["Bodega"])
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run(app, host="0.0.0.0", port=8080, reload=True)
