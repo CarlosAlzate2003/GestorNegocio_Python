@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 from app.routes.Bodega.BodegaControladores import router as bodega_router
 from app.routes.Login.LoginControlador import router as login_router
+from app.routes.Usuarios.UsuariosController import router as usuarios_router
 from app.models.Tables import Base
 from app.database.Config import engine
 
@@ -43,6 +44,7 @@ app.add_middleware(
 )
 
 app.include_router(login_router, prefix="/login", tags=["Login"])
+app.include_router(usuarios_router, prefix="/usuarios", tags=["Usuarios"])
 app.include_router(bodega_router, prefix="/bodega", tags=["Bodega"])
 
 
