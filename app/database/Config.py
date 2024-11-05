@@ -14,7 +14,6 @@ user = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD")
 dbName = os.getenv("DB_NAME")
 
-print(host, port, user, password, dbName)
 
 conectionDB = f"mysql+mysqlconnector://{user}:{password}@{host}:{port}/{dbName}"
 

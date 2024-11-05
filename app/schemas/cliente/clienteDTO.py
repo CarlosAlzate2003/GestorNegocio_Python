@@ -4,6 +4,7 @@ from typing import Optional
 
 class clienteDTORequest(BaseModel):
     id: Optional[int] = None
+    cedula: str = Field(min_length=1, max_length=50)
     nombre: str = Field(min_length=1, max_length=50)
     direccion: str = Field(min_length=1, max_length=50)
     telefono: str = Field(min_length=1, max_length=50)
@@ -15,6 +16,7 @@ class clienteDTORequest(BaseModel):
 
 class clienteDTOResponse(BaseModel):
     id: Optional[int] = None
+    cedula: str = Field(min_length=1, max_length=50)
     nombre: str = Field(min_length=1, max_length=50)
     direccion: str = Field(min_length=1, max_length=50)
     telefono: str = Field(min_length=1, max_length=50)

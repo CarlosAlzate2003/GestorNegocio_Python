@@ -17,3 +17,10 @@ class categoria_productoDTOResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class categoria_productoDTOResponseProductos(BaseModel):
+    nombre: str = Field(min_length=1)
+
+    class Config:
+        orm_mode = True

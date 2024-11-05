@@ -61,6 +61,7 @@ class productos(Base):
 class cliente(Base):
     __tablename__ = "cliente"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    cedula = Column(String(50), nullable=False)
     nombre = Column(String(50), nullable=False)
     direccion = Column(String(50), nullable=False)
     telefono = Column(String(50), nullable=False)

@@ -31,3 +31,52 @@ async def crear_usuario(dataUser: usuarioDTOrequest, db: Session = Depends(get_d
     except Exception as e:
         db.rollback()
         raise e
+
+
+@router.put(
+    "/update/{id}",
+    response_model=usuarioDTOresponse,
+    dependencies=[Depends(JWTBearer(required_roles=[1]))],
+    summary="Actualiza sus usuarios",
+)
+async def Actualizar_Usuario(
+    id: int,
+    usuario: usuarioDTOrequest,
+    db: Session = Depends(get_db),
+):
+    usuario_Actualizar = db.query(usuarios).filter(usuarios.id == id).first()
+    if usuario_Actualizar:
+        usuario_Actualizar.nombre = usuario.nombre
+        usuario_Actualizar.correo = usuario.correo
+        usuario_Actualizar.contrasena = usuario.contrasena
+        usuario_Actualizar.fk_rol = usuario.rol
+        usuario_Actualizar.estado = usuario.estado
+        db.commit()
+        db.refresh(usuario_Actualizar)
+        return usuario_Actualizar
+    else:
+        return JSONResponse(
+            status_code=404, content={"message": "Usuario no encontrado"}
+        )
+
+
+@router.patch(
+    "/disable/{id}",
+    response_model=usuarioDTOresponse,
+    dependencies=[Depends(JWTBearer(required_roles=[1]))],
+    summary="Desactiva sus usuarios",
+)
+async def Desactivar_Usuario(
+    id: int,
+    db: Session = Depends(get_db),
+):
+    usuario_Actualizar = db.query(usuarios).filter(usuarios.id == id).first()
+    if usuario_Actualizar:
+        usuario_Actualizar.estado = False
+        db.commit()
+        db.refresh(usuario_Actualizar)
+        return usuario_Actualizar
+    else:
+        return JSONResponse(
+            status_code=404, content={"message": "Usuario no encontrado"}
+        )

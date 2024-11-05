@@ -6,6 +6,10 @@ from starlette.responses import RedirectResponse
 from app.routes.Bodega.BodegaControladores import router as bodega_router
 from app.routes.Login.LoginControlador import router as login_router
 from app.routes.Usuarios.UsuariosController import router as usuarios_router
+from app.routes.Proveedores.ProveedoresController import router as proveedores_router
+from app.routes.Categorias.CategoriaController import router as categoria_router
+from app.routes.Cliente.ClienteController import router as cliente_router
+from app.routes.CargaExcel.CargaController import router as carga_router
 from app.models.Tables import Base
 from app.database.Config import engine
 
@@ -15,18 +19,13 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 # al poner la ruta '/docs' se abre el swagger
-app.title = "GestorNegocio"
-app.version = "0.0.1"
+app.title = "pyBusiness"
+app.version = "0.0.7"
 
 
 @app.get("/", tags=["Default"])
 def main():
     return RedirectResponse("/docs")
-
-
-@app.get("/Home", tags=["Default"])
-async def Home():
-    return HTMLResponse("<h1>Hello World</h1>")
 
 
 origins = {
@@ -46,6 +45,11 @@ app.add_middleware(
 app.include_router(login_router, prefix="/login", tags=["Login"])
 app.include_router(usuarios_router, prefix="/usuarios", tags=["Usuarios"])
 app.include_router(bodega_router, prefix="/bodega", tags=["Bodega"])
+app.include_router(proveedores_router, prefix="/proveedores", tags=["Proveedores"])
+app.include_router(categoria_router, prefix="/categorias", tags=["Categorias"])
+app.include_router(cliente_router, prefix="/clientes", tags=["Clientes"])
+
+app.include_router(carga_router, prefix="/carga", tags=["Cargas masivas"])
 
 
 if __name__ == "__main__":

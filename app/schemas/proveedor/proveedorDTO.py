@@ -23,3 +23,10 @@ class proveedoresDTOResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class proveedoresDTOResponseProductos(BaseModel):
+    nombre: str = Field(min_length=1)
+
+    class Config:
+        orm_mode = True

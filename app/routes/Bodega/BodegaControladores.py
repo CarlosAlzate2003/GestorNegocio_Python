@@ -13,6 +13,7 @@ router = APIRouter()
     "/productos",
     response_model=list[productosDTOResponse],
     dependencies=[Depends(JWTBearer())],
+    summary="Trae sus productos",
 )
 async def Traer_Bodega(db: Session = Depends(get_db)):
     productos_list = db.query(productos).all()
@@ -20,30 +21,52 @@ async def Traer_Bodega(db: Session = Depends(get_db)):
 
 
 @router.get(
-    "/productos/{id}", response_model=productosDTOResponse, summary="Trae sus productos"
+    "/productos/{id}",
+    response_model=productosDTOResponse,
+    dependencies=[Depends(JWTBearer())],
+    summary="Trae sus productos",
 )
-async def Traer_Producto(id: int):
-    for producto in productos:
-        if producto["id"] == id:
-            return producto
-    return JSONResponse(status_code=404, content={"message": "Producto no encontrado"})
+async def Traer_Producto(id: int, db: Session = Depends(get_db)):
+    producto = db.query(productos).filter(productos.id == id).first()
+    if producto:
+        return producto
+    else:
+        return JSONResponse(
+            status_code=404, content={"message": "Producto no encontrado"}
+        )
 
 
-@router.get("/productos/")
-async def Traer_Producto_PorCategoria(categoria: str):
-    return [producto for producto in productos if producto["categoria"] == categoria]
+@router.get(
+    "/productos/categoria/{id}",
+    dependencies=[Depends(JWTBearer())],
+    summary="Trae sus productos por categoria",
+)
+async def Traer_Producto_PorCategoria(id: int, db: Session = Depends(get_db)):
+    productos_list = db.query(productos).filter(productos.fk_categoria == id).all()
+    if productos_list:
+        return productos_list
+    else:
+        return JSONResponse(
+            status_code=404, content={"message": "Esta categoria no existe"}
+        )
 
 
 @router.post(
-    "/productos", response_model=productosDTOResponse, summary="Agrega productos"
+    "/productos",
+    response_model=productosDTOResponse,
+    dependencies=[Depends(JWTBearer())],
+    summary="Agrega productos",
 )
 async def Agregar_Producto(data: productosDTORequest, db: Session = Depends(get_db)):
     try:
         producto = productos(
-            nombre=data.nombre_producto,
-            categoria=data.categoria,
+            nombre_producto=data.nombre_producto,
+            descripcion=data.descripcion,
             precio=data.precio,
             cantidad=data.cantidad,
+            fecha_ingreso=data.fecha_ingreso,
+            fk_proveedor=data.fk_proveedor,
+            fk_categoria=data.fk_categoria,
         )
         db.add(producto)
         db.commit()
@@ -54,26 +77,43 @@ async def Agregar_Producto(data: productosDTORequest, db: Session = Depends(get_
         raise e
 
 
-@router.put("/productos/{id}")
-async def Actualizar_Producto(id: int, producto: productosDTORequest):
-    for producto in productos:
-        if producto["id"] == id:
-            producto["nombre"] = producto.nombre
-            producto["categoria"] = producto.categoria
-            producto["precio"] = producto.precio
-            producto["cantidad"] = producto.cantidad
-            return JSONResponse(
-                status_code=201, content={"message": "Producto actualizado"}
-            )
-    return JSONResponse(status_code=404, content={"message": "Producto no encontrado"})
+@router.put(
+    "/productos/{id}",
+    dependencies=[Depends(JWTBearer())],
+    summary="Actualiza sus productos",
+)
+async def Actualizar_Producto(
+    id: int, producto: productosDTORequest, db: Session = Depends(get_db)
+):
+    producto_actualizar = db.query(productos).filter(productos.id == id).first()
+    if producto_actualizar:
+        producto_actualizar.nombre_producto = producto.nombre_producto
+        producto_actualizar.descripcion = producto.descripcion
+        producto_actualizar.precio = producto.precio
+        producto_actualizar.cantidad = producto.cantidad
+        producto_actualizar.fk_proveedor = producto.fk_proveedor
+        producto_actualizar.fk_categoria = producto.fk_categoria
+        db.commit()
+        db.refresh(producto_actualizar)
+        return producto_actualizar
+    else:
+        return JSONResponse(
+            status_code=404, content={"message": "Producto no encontrado"}
+        )
 
 
-@router.delete("/productos/{id}")
-async def Eliminar_Producto(id: int):
-    for producto in productos:
-        if producto["id"] == id:
-            productos.remove(producto)
-            return JSONResponse(
-                status_code=200, content={"message": "Producto eliminado"}
-            )
-    return JSONResponse(status_code=404, content={"message": "Producto no encontrado"})
+@router.delete(
+    "/productos/{id}",
+    dependencies=[Depends(JWTBearer())],
+    summary="Elimina sus productos",
+)
+async def Eliminar_Producto(id: int, db: Session = Depends(get_db)):
+    producto = db.query(productos).filter(productos.id == id).first()
+    if producto:
+        db.delete(producto)
+        db.commit()
+        return JSONResponse(status_code=200, content={"message": "Producto eliminado"})
+    else:
+        return JSONResponse(
+            status_code=404, content={"message": "Producto no encontrado"}
+        )
