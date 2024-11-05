@@ -44,7 +44,7 @@ class productos(Base):
     __tablename__ = "productos"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     nombre_producto = Column(String(50), nullable=False)
-    descripcion = Column(String(50), nullable=False)
+    descripcion = Column(String(50), nullable=True)
     cantidad = Column(Integer, nullable=False)
     precio = Column(Float, nullable=False)
     fecha_ingreso = Column(DateTime, nullable=False)

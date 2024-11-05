@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from app.database.Config import get_db, SessionLocal, engine
+from app.database.Config import get_db
 from app.schemas.bodega.bodegaDTO import productosDTORequest, productosDTOResponse
 from app.security.jwt_manager import JWTBearer
 from app.models.Tables import productos
@@ -14,8 +14,9 @@ router = APIRouter()
     response_model=list[productosDTOResponse],
     dependencies=[Depends(JWTBearer())],
 )
-async def Traer_Bodega():
-    return productos
+async def Traer_Bodega(db: Session = Depends(get_db)):
+    productos_list = db.query(productos).all()
+    return productos_list
 
 
 @router.get(
@@ -39,7 +40,7 @@ async def Traer_Producto_PorCategoria(categoria: str):
 async def Agregar_Producto(data: productosDTORequest, db: Session = Depends(get_db)):
     try:
         producto = productos(
-            nombre=data.nombre,
+            nombre=data.nombre_producto,
             categoria=data.categoria,
             precio=data.precio,
             cantidad=data.cantidad,
