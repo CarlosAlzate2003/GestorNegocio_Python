@@ -2,18 +2,25 @@ from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 
 
 def create_token(data: dict):
     expiration = datetime.utcnow() + timedelta(minutes=50)  # Expirará en 30 minutos
     data.update({"exp": expiration})
-    token: str = encode(payload=data, key="my_secret_key", algorithm="HS256")
+    token: str = encode(payload=data, key=SECRET_KEY, algorithm=ALGORITHM)
     return token
 
 
 def validate_token(token: str) -> dict:
     try:
-        data: dict = decode(token, key="my_secret_key", algorithms=["HS256"])
+        data: dict = decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
         return data
     except ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expirado")
@@ -25,6 +32,4 @@ class JWTBearer(HTTPBearer):
     async def __call__(self, request: Request):
         auth = await super().__call__(request)
         data = validate_token(auth.credentials)
-        if data["username"] != "admin":
-            raise HTTPException(status_code=403, detail="Credenciales son invalidas")
         return data
