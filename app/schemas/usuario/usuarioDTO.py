@@ -7,6 +7,7 @@ from app.schemas.rol.rolDTO import rolDTOresponse
 class usuarioDTOrequest(BaseModel):
     id: Optional[int] = None
     nombre: str = Field(..., min_length=3, max_length=50)
+    cedula: str = Field(..., min_length=3, max_length=50)
     correo: str = Field(..., min_length=3, max_length=50)
     contrasena: str = Field(..., min_length=3, max_length=50)
     rol: int
@@ -19,11 +20,20 @@ class usuarioDTOrequest(BaseModel):
 
 class usuarioDTOresponse(BaseModel):
     nombre: str = Field(..., min_length=3, max_length=50)
+    cedula: str = Field(..., min_length=3, max_length=50)
     correo: str = Field(..., min_length=3, max_length=50)
     contrasena: str = Field(..., min_length=3, max_length=50)
     rol: rolDTOresponse
     estado: bool = Field(...)
     fecha_creacion: datetime = Field(default=datetime.now())
+
+    class Config:
+        orm_mode = True
+
+
+class usuarioDTOresponseFactura(BaseModel):
+    nombre: str = Field(..., min_length=3, max_length=50)
+    cedula: str = Field(..., min_length=3, max_length=50)
 
     class Config:
         orm_mode = True

@@ -20,6 +20,7 @@ class productosDTORequest(BaseModel):
 
 
 class productosDTOResponse(BaseModel):
+    id: Optional[int] = None
     nombre_producto: str = Field(min_length=1)
     descripcion: str = Field(min_length=1)
     cantidad: int = Field(gt=0)
@@ -27,6 +28,23 @@ class productosDTOResponse(BaseModel):
     fecha_ingreso: datetime = Field(default_factory=datetime.now)
     proveedor: proveedoresDTOResponseProductos
     categoria: categoria_productoDTOResponseProductos
+
+    class Config:
+        orm_mode = True
+
+
+class productosDTORequestCompra(BaseModel):
+    id: int = Field(gt=0)
+    cantidad: int = Field(gt=0)
+
+    class Config:
+        orm_mode = True
+
+
+class productosDTOResponseVenta(BaseModel):
+    id: int = Field(gt=0)
+    nombre_producto: str = Field(min_length=1)
+    precio: float = Field(gt=0)
 
     class Config:
         orm_mode = True

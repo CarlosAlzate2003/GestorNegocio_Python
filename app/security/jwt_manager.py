@@ -31,6 +31,7 @@ def validate_token(token: str) -> dict:
         raise HTTPException(status_code=401, detail="Token inválido")
 
 
+# Proceso que valida y si pasa las condiciones retorna bien
 class JWTBearer(HTTPBearer):
     def __init__(self, required_roles: list = None):
         super().__init__()
@@ -44,7 +45,9 @@ class JWTBearer(HTTPBearer):
         if self.required_roles:
             has_permission(user_data, self.required_roles)
 
-        return user_data
+        usuario_correo = user_data.get("id")
+
+        return usuario_correo
 
 
 def has_permission(data: dict, required_roles: list):

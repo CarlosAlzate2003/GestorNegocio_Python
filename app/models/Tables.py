@@ -15,6 +15,7 @@ class usuarios(Base):
     __tablename__ = "usuarios"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     nombre = Column(String(50), nullable=False)
+    cedula = Column(String(50), nullable=False)
     correo = Column(String(50), nullable=False)
     contrasena = Column(String(50), nullable=False)
     fk_rol = Column(Integer, ForeignKey("rol.id"), nullable=False, index=True)

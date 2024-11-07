@@ -34,6 +34,7 @@ def login(dataUser: loginRequest, db: Session = Depends(get_db)):
 
             token_data = dataUser.dict()
             token_data.update({"rol": rolUser.id})
+            token_data.update({"id": user.id})
 
             token: str = create_token(token_data)
             return JSONResponse(
@@ -41,4 +42,5 @@ def login(dataUser: loginRequest, db: Session = Depends(get_db)):
             )
 
     except Exception as e:
-        return JSONResponse(status_code=401, content={"message": "Usuario incorrecto"})
+        print(e)
+        return JSONResponse(status_code=500, content={"message": "Fallo al loguear"})

@@ -54,7 +54,7 @@ async def Traer_Producto_PorCategoria(id: int, db: Session = Depends(get_db)):
 @router.post(
     "/productos",
     response_model=productosDTOResponse,
-    dependencies=[Depends(JWTBearer())],
+    dependencies=[Depends(JWTBearer(required_roles=[1]))],
     summary="Agrega productos",
 )
 async def Agregar_Producto(data: productosDTORequest, db: Session = Depends(get_db)):
@@ -77,9 +77,28 @@ async def Agregar_Producto(data: productosDTORequest, db: Session = Depends(get_
         raise e
 
 
+@router.post(
+    "/productos/addstock",
+    response_model=productosDTOResponse,
+    dependencies=[Depends(JWTBearer(required_roles=[1]))],
+    summary="Agrega stock",
+)
+async def Agregar_Stock(id: int, cantidad: int, db: Session = Depends(get_db)):
+    producto = db.query(productos).filter(productos.id == id).first()
+    if producto:
+        producto.cantidad += cantidad
+        db.commit()
+        db.refresh(producto)
+        return producto
+    else:
+        return JSONResponse(
+            status_code=404, content={"message": "Producto no encontrado"}
+        )
+
+
 @router.put(
     "/productos/{id}",
-    dependencies=[Depends(JWTBearer())],
+    dependencies=[Depends(JWTBearer(required_roles=[1]))],
     summary="Actualiza sus productos",
 )
 async def Actualizar_Producto(
@@ -104,7 +123,7 @@ async def Actualizar_Producto(
 
 @router.delete(
     "/productos/{id}",
-    dependencies=[Depends(JWTBearer())],
+    dependencies=[Depends(JWTBearer(required_roles=[1]))],
     summary="Elimina sus productos",
 )
 async def Eliminar_Producto(id: int, db: Session = Depends(get_db)):
